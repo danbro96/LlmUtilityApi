@@ -13,7 +13,10 @@ services:
     environment:
       Auth__ApiKeys__0__Key: ${UTILITY_API_KEY:?required}
       Auth__ApiKeys__0__Name: ${UTILITY_API_KEY_NAME:-prod}
-      # Add more keys for other consumers: Auth__ApiKeys__1__Key / __1__Name, etc.
+      # Per-caller keys: own rate-limit bucket + name in logs. family-web = the portal chat's tool loop.
+      # Add more consumers as Auth__ApiKeys__N__Key / __N__Name.
+      Auth__ApiKeys__1__Key: ${FAMILY_WEB_API_KEY:?required}
+      Auth__ApiKeys__1__Name: family-web
       Auth__AllowedOrigins__0: ${ALLOWED_ORIGIN:-}
       RateLimit__RequestsPerMinute: ${RATE_LIMIT:-120}
       Fetch__MaxResponseBytes: ${FETCH_MAX_BYTES:-5242880}
