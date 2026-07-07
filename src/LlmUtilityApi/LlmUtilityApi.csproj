@@ -7,6 +7,16 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
+  <!--
+    Emit the OpenAPI document at build time so the JSON spec stays in lockstep with the Map*
+    endpoints. `dotnet build` writes `openapi/LlmUtilityApi.json` at the repo root.
+  -->
+  <PropertyGroup>
+    <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+    <OpenApiDocumentsDirectory>$(MSBuildThisFileDirectory)..\..\openapi</OpenApiDocumentsDirectory>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Expose internal pure helpers (SSRF guard, chunker) for unit testing. -->
     <InternalsVisibleTo Include="LlmUtilityApi.UnitTests" />
@@ -21,6 +31,10 @@
     <PackageReference Include="JsonSchema.Net" Version="9.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="NCalc" Version="6.3.2" />
     <PackageReference Include="PdfPig" Version="0.1.15" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.5" />
