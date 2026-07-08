@@ -105,4 +105,24 @@ public class ToolsTests
         Assert.Equal(DocKind.Html, kind);
         Assert.Contains("Hello world", text);
     }
+
+    [Fact]
+    public void Search_parses_maps_caps_and_skips_incomplete()
+    {
+        const string json = """
+            {"results":[
+              {"title":" First ","url":"https://a.example/1","content":" snippet one "},
+              {"title":"No url","content":"dropped"},
+              {"title":"Second","url":"https://b.example/2","content":"snippet two"},
+              {"title":"Third","url":"https://c.example/3","content":"snippet three"}
+            ]}
+            """;
+        var results = SearxngParser.Parse(json, max: 2);
+
+        Assert.Equal(2, results.Count);
+        Assert.Equal("First", results[0].Title);                 // trimmed
+        Assert.Equal("snippet one", results[0].Snippet);         // trimmed
+        Assert.Equal("https://a.example/1", results[0].Url);
+        Assert.Equal("https://b.example/2", results[1].Url);     // entry missing url skipped, so this is #2
+    }
 }

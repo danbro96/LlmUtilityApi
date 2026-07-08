@@ -5,7 +5,8 @@
 # The service exposes ONLY an agent MCP surface at /mcp (LAN/WireGuard-only) plus health + OpenAPI.
 # The Cloudflare Tunnel MUST NOT route /mcp — the app 404s any /mcp request carrying Cloudflare edge
 # headers as a backstop (UseMcpLanOnly). The fetch tool reaches the public internet but refuses
-# private/loopback/link-local addresses (SSRF guard); keep AllowPrivateNetworks=false.
+# private/loopback/link-local addresses (SSRF guard); keep AllowPrivateNetworks=false. The web_search
+# tool talks only to the internal searxng sidecar (a trusted endpoint, so not SSRF-guarded).
 services:
   llm-utility-api:
     image: danbro96/llm-utility-api:${IMAGE_TAG:-latest}
@@ -24,6 +25,10 @@ services:
       Fetch__MaxRedirects: ${FETCH_MAX_REDIRECTS:-5}
       Fetch__AllowPrivateNetworks: ${FETCH_ALLOW_PRIVATE:-false}
       Doc__MaxBytes: ${DOC_MAX_BYTES:-20971520}
+      # web_search → the searxng sidecar (internal). Trusted endpoint, not SSRF-guarded.
+      Search__BaseUrl: ${SEARXNG_URL:-http://searxng:8080}
+      Search__MaxResults: ${SEARCH_MAX_RESULTS:-10}
+      Search__TimeoutSeconds: ${SEARCH_TIMEOUT:-15}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
       OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
@@ -41,6 +46,20 @@ services:
     networks:
       - default
       - medelynas_telemetry
+
+  # web_search backend. Internal only — no host port; only llm-utility-api reaches it on `default`.
+  # settings.yml enables the JSON API (off by default) and disables the limiter (no Valkey needed).
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    environment:
+      SEARXNG_SECRET: ${SEARXNG_SECRET:?required}   # openssl rand -hex 32
+      SEARXNG_BASE_URL: http://searxng:8080/
+    volumes:
+      - ${SEARXNG_CONFIG_DIR:?required}:/etc/searxng:rw   # host dir holding searxng/settings.yml
+    restart: unless-stopped
+    networks:
+      - default
 
 networks:
   default:

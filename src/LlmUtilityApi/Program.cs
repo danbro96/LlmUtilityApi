@@ -15,10 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<ApiKeyAuthOptions>(builder.Configuration.GetSection("Auth"));
 builder.Services.Configure<FetchOptions>(builder.Configuration.GetSection("Fetch"));
 builder.Services.Configure<DocOptions>(builder.Configuration.GetSection("Doc"));
+builder.Services.Configure<SearchOptions>(builder.Configuration.GetSection("Search"));
 
 // The web-fetch tool: an HttpClient whose connections are pinned to public IPs by an SSRF guard
 // (see SafeFetchService), with auto-redirect re-validated per hop.
 builder.Services.AddSingleton<SafeFetchService>();
+
+// The web-search tool: queries a trusted, admin-configured SearXNG endpoint (no SSRF guard — the
+// endpoint may be a LAN instance). Empty Search:BaseUrl => the tool errors when called.
+builder.Services.AddSingleton<WebSearchService>();
 
 // MCP agent surface. The [McpServerToolType] tool groups in this assembly are mounted at /mcp over
 // Streamable HTTP, secured by the same X-API-Key scheme (see MapMcp below), and kept
@@ -81,8 +86,9 @@ builder.Services.AddOpenApi("v1", options =>
             Version = "v1",
             Description =
                 "Self-hosted utility tools for LLM agents, exposed over MCP at /mcp (LAN-only). " +
-                "Pure deterministic tools (math, time, json, text, crypto, random) plus web-fetch " +
-                "and document extraction. Authenticate with your key in the X-API-Key header.",
+                "Pure deterministic tools (math, time, json, text, crypto, random) plus web-search " +
+                "(SearXNG), web-fetch, and document extraction. Authenticate with your key in the " +
+                "X-API-Key header.",
         };
         document.Components ??= new();
         document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();

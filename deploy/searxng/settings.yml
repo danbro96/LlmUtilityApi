@@ -1,0 +1,10 @@
+# SearXNG config for the web_search sidecar. Place in the dir bound to /etc/searxng (SEARXNG_CONFIG_DIR).
+# server.secret_key is overridden by the SEARXNG_SECRET env var.
+use_default_settings: true
+server:
+  secret_key: "set-via-SEARXNG_SECRET-env"
+  limiter: false          # no Valkey/Redis — single trusted internal caller
+search:
+  formats:
+    - html
+    - json                # REQUIRED — web_search calls ?format=json
