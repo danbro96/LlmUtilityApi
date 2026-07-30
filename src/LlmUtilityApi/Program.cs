@@ -1,14 +1,13 @@
+using System.Threading.RateLimiting;
 using LlmUtilityApi.Auth;
 using LlmUtilityApi.Endpoints;
 using LlmUtilityApi.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Json.Path;
 using Json.Schema;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
