@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "LlmUtilityApi",
-    "description": "Self-hosted utility tools for LLM agents, exposed over MCP at /mcp (LAN-only). Pure deterministic tools (math, time, json, text, crypto, random) plus web-fetch and document extraction. Authenticate with your key in the X-API-Key header.",
+    "description": "Self-hosted utility tools for LLM agents, exposed over MCP at /mcp (LAN-only). Pure deterministic tools (math, time, json, text, crypto, random) plus web-search (SearXNG), web-fetch, and document extraction. Authenticate with your key in the X-API-Key header.",
     "version": "v1"
   },
   "paths": { },
