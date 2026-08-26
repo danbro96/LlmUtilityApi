@@ -146,9 +146,3 @@ public static class TimeTools
         return $"{(int) span.TotalSeconds}s";
     }
 }
-
-public sealed record NowResult(string Utc, long Unix, string? Timezone, string? Local);
-
-public sealed record DiffResult(double TotalSeconds, string Human);
-
-public sealed record ParseResult(string Utc, long Unix);

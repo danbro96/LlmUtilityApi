@@ -175,7 +175,3 @@ public static class TextTools
         return v.ToJsonString();
     }
 }
-
-public sealed record RegexTestResult(bool IsMatch, int Count);
-
-public sealed record RegexMatchInfo(string Value, string[] Groups);

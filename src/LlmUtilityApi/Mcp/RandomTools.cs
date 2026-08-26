@@ -70,5 +70,3 @@ public static partial class RandomTools
     [GeneratedRegex(@"^(\d+)d(\d+)([+-]\d+)?$", RegexOptions.IgnoreCase)]
     private static partial Regex DiceNotation();
 }
-
-public sealed record DiceResult(IReadOnlyList<int> Rolls, int Total);

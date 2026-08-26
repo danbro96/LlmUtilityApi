@@ -6,25 +6,6 @@ using SmartReader;
 
 namespace LlmUtilityApi.Services;
 
-public sealed class FetchResult
-{
-    public required string Url { get; init; }
-
-    public string? Title { get; init; }
-
-    public string? Byline { get; init; }
-
-    public string? SiteName { get; init; }
-
-    public required string Content { get; init; }
-
-    public int Length { get; init; }
-
-    public string? ContentType { get; init; }
-
-    public bool Truncated { get; init; }
-}
-
 /// <summary>
 /// Fetches a URL with an SSRF guard: every TCP connection (including each redirect hop) is pinned to
 /// a publicly-routable address by <see cref="IpGuard"/>, so a hostname can't be pointed at LAN/cloud

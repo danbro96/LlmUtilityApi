@@ -95,5 +95,3 @@ public static class JsonTools
         }
     }
 }
-
-public sealed record ValidateResult(bool Valid, IReadOnlyList<string> Errors);

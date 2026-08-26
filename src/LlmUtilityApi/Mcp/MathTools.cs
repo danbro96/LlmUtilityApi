@@ -47,7 +47,3 @@ public static class MathTools
         }
     }
 }
-
-public sealed record MathResult(string Expression, string Result);
-
-public sealed record UnitResult(double Input, string FromUnit, double Output, string ToUnit, string Quantity);

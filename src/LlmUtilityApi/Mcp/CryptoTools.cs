@@ -120,5 +120,3 @@ public static class CryptoTools
         return JsonNode.Parse(bytes);
     }
 }
-
-public sealed record JwtParts(JsonNode? Header, JsonNode? Payload);

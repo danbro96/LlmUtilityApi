@@ -2,10 +2,6 @@ using Microsoft.Extensions.Options;
 
 namespace LlmUtilityApi.Services;
 
-public sealed record SearchResult(string Title, string Url, string Snippet);
-
-public sealed record WebSearchResult(string Query, int Count, IReadOnlyList<SearchResult> Results);
-
 /// <summary>
 /// Queries a self-hosted SearXNG instance (JSON API) and maps its results to <see cref="SearchResult"/>.
 /// Unlike <see cref="SafeFetchService"/> there is no SSRF guard: the endpoint is a single, admin-configured,

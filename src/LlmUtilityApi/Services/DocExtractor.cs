@@ -6,14 +6,6 @@ using UglyToad.PdfPig;
 
 namespace LlmUtilityApi.Services;
 
-public enum DocKind
-{
-    Pdf,
-    Docx,
-    Html,
-    Text,
-}
-
 /// <summary>Extracts plain text from a document's bytes (PDF, Word .docx, HTML, or plain text).</summary>
 public static class DocExtractor
 {

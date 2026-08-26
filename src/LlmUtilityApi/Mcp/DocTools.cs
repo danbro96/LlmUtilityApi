@@ -68,7 +68,3 @@ public sealed class DocTools
         }
     }
 }
-
-public sealed record ExtractResult(string Kind, string Text, int Length);
-
-public sealed record ChunkResult(int Count, IReadOnlyList<string> Chunks);
