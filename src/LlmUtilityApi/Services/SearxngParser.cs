@@ -26,15 +26,19 @@ internal static class SearxngParser
 
     private sealed class Payload
     {
-        [JsonPropertyName("results")] public List<Entry>? Results { get; set; }
+        [JsonPropertyName("results")]
+        public List<Entry>? Results { get; set; }
     }
 
     private sealed class Entry
     {
-        [JsonPropertyName("title")] public string? Title { get; set; }
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
 
-        [JsonPropertyName("url")] public string? Url { get; set; }
+        [JsonPropertyName("url")]
+        public string? Url { get; set; }
 
-        [JsonPropertyName("content")] public string? Content { get; set; }
+        [JsonPropertyName("content")]
+        public string? Content { get; set; }
     }
 }
