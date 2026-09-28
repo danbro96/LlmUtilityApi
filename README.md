@@ -21,7 +21,7 @@ computation except the two outbound tools (`search`, `fetch`).
 
 ## Surface
 
-Agent **MCP** at `/mcp` (Streamable HTTP) plus `/openapi/v1.json`, `/scalar`, `/livez`, `/readyz`. The MCP
+Agent **MCP** at `/mcp` (Streamable HTTP) plus `/openapi/v1.json`, `/scalar`, `/livez`, `/readyz`, `/depz` (non-gating dependency report, `X-Probe-Key`-gated). The MCP
 surface is **LAN/WireGuard-only** — not meant to be tunnelled publicly. Health probes are process-up only.
 
 ## Auth & exposure
@@ -43,6 +43,7 @@ the single trusted `Search:BaseUrl` (a self-hosted SearXNG, typically on the LAN
 | `Fetch` | `AllowPrivateNetworks` | `false` | **keep false** — the SSRF guard |
 | `Search` | `BaseUrl` | empty | SearXNG URL (e.g. `http://searxng:8080`); required for `web_search` |
 | `Search` | `MaxResults` / `TimeoutSeconds` / `Language` | 10 / 15 / — | `web_search` result cap, timeout, optional lang |
+| `Depz` | `ProbeKey` / `PollInterval` / `ProbeTimeout` | empty / 60s / 5s | `/depz` key (`X-Probe-Key`); empty = off |
 | `Doc` | `MaxBytes` | 20 MiB | `extract_text` cap (also sizes the request body limit) |
 | OTEL | `OTEL_EXPORTER_OTLP_ENDPOINT`, … | unset → off | OTLP export when set |
 

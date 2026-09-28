@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using LlmUtilityApi.Auth;
+using LlmUtilityApi.Dependencies;
 using LlmUtilityApi.Endpoints;
 using LlmUtilityApi.Services;
 using Microsoft.OpenApi;
@@ -23,6 +24,17 @@ builder.Services.AddSingleton<SafeFetchService>();
 // The web-search tool: queries a trusted, admin-configured SearXNG endpoint (no SSRF guard — the
 // endpoint may be a LAN instance). Empty Search:BaseUrl => the tool errors when called.
 builder.Services.AddSingleton<WebSearchService>();
+
+// Non-gating dependency probe (/depz): edges derive from the options above, probed on a dedicated client.
+builder.Services.Configure<DepzOptions>(builder.Configuration.GetSection(DepzOptions.SectionName));
+var depzOptions = builder.Configuration.GetSection(DepzOptions.SectionName).Get<DepzOptions>() ?? new DepzOptions();
+var searchOptions = builder.Configuration.GetSection("Search").Get<SearchOptions>() ?? new SearchOptions();
+builder.Services.AddSingleton(DependencyTargets.From(searchOptions));
+builder.Services.AddSingleton<DependencyReportCache>();
+builder.Services.AddSingleton<DependencyProbe>();
+builder.Services.AddHttpClient(DependencyProbe.ProbeClientName, c => c.Timeout = depzOptions.ProbeTimeout);
+if (depzOptions.Enabled)
+    builder.Services.AddHostedService<DependencyPollWorker>();
 
 // MCP agent surface. The [McpServerToolType] tool groups in this assembly are mounted at /mcp over
 // Streamable HTTP, secured by the same X-API-Key scheme (see MapMcp below), and kept
@@ -115,11 +127,13 @@ if (!string.IsNullOrWhiteSpace(otlpEndpoint))
             {
                 o.RecordException = true;
                 // Health probes are polled constantly by docker + devops-monitor; their spans add nothing.
-                o.Filter = ctx => ctx.Request.Path != "/livez" && ctx.Request.Path != "/readyz";
+                o.Filter = ctx => ctx.Request.Path != "/livez" && ctx.Request.Path != "/readyz"
+                    && ctx.Request.Path != "/depz";
             })
             .AddHttpClientInstrumentation()
             .AddOtlpExporter())
         .WithMetrics(m => m
+            .AddMeter("LlmUtilityApi.*")
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
@@ -151,6 +165,7 @@ app.MapScalarApiReference("/scalar", o => o
     .AllowAnonymous();
 
 app.MapAppHealthChecks(app.Environment);
+app.MapDepz();
 
 // Agent MCP surface (Streamable HTTP). Mapped AFTER UseAuthentication/UseAuthorization so the
 // same X-API-Key scheme validates it; RequireAuthorization rejects anonymous calls with 401.
