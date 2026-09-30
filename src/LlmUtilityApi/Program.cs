@@ -2,6 +2,7 @@ using System.Threading.RateLimiting;
 using LlmUtilityApi.Auth;
 using LlmUtilityApi.Dependencies;
 using LlmUtilityApi.Endpoints;
+using LlmUtilityApi.Mcp;
 using LlmUtilityApi.Services;
 using Microsoft.OpenApi;
 using OpenTelemetry.Logs;
@@ -42,6 +43,7 @@ if (depzOptions.Enabled)
 builder.Services
     .AddMcpServer()
     .WithHttpTransport()
+    .WithRequestFilters(f => f.AddCallToolFilter(StrictToolArguments.Filter))
     .WithToolsFromAssembly();
 
 // Liveness (/livez) + readiness (/readyz) probes. Stateless service — both are process-up only.
